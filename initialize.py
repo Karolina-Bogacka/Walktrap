@@ -111,3 +111,9 @@ def find_merge(clusters):
                 min_d = dist
                 to_merge = (i, j)
     return to_merge[0], to_merge[1], min_d
+
+
+class Partition:
+    def __init__(self, split, score):
+        self.split = split
+        self.score = score
