@@ -41,4 +41,4 @@ for _ in range(2*n+m-k):
     i, j, distance = find_merge(clusters)
     clusters.merge(i, j)
     partitions.append(Partition([x.nodes for x in clusters.clusters.values()], distance))
-    plot_colored(clusters, G, colors)
+plot_colored(clusters, G, colors)
