@@ -39,4 +39,4 @@ clusters = ClusterArray(G, cc)
 for _ in range(2*n+m-k):
     i, j, _ = find_merge(clusters)
     clusters.merge(i, j)
-    plot_colored(clusters, G, colors)
+plot_colored(clusters, G, colors)
