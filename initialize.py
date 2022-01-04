@@ -2,10 +2,19 @@ import networkx as nx
 import numpy as np
 
 
-def q_metric(clusters):
-    for c in clusters:
-        pass
-    pass
+def q_metric(G, clusters):
+    q = 0
+    total_edges = len(G.edges)
+    for key, cluster in clusters.clusters.items():
+        ei, ai = 0.0, 0.0
+        for n in cluster.nodes:
+            edges = G.edges(n)
+            for (i, j) in edges:
+                if i in cluster.nodes and j in cluster.nodes:
+                    ei += 1
+                ai += 1
+        q += (ei - (ai ** 2)/total_edges)/total_edges
+    return q
 
 
 def graph_degree(graph):
