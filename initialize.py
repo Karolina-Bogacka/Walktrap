@@ -2,6 +2,12 @@ import networkx as nx
 import numpy as np
 
 
+def q_metric(clusters):
+    for c in clusters:
+        pass
+    pass
+
+
 def graph_degree(graph):
     return [d for i, d in graph.degree]
 
