@@ -57,7 +57,7 @@ class ClusterArray:
         return self.index
 
     def merge(self, i, j):
-        c = self.clusters[i].merge(self.clusters[j])
+        c = self.clusters[i].merge(self.clusters[j], self)
         self.clusters[c.index] = c
         self.clusters.pop(i)
         self.clusters.pop(j)
@@ -87,16 +87,16 @@ class Cluster:
             dict()
         )
 
-        neighbors = self.neighbors.keys().union(other.neighbors.keys())
+        neighbors = set(self.neighbors.keys()).union(set(other.neighbors.keys()))
         neighbors.remove(self.index)
         neighbors.remove(other.index)
 
         c.neighbors = {
-            target: recompute_variance(self, other, neighbors, clusters[target], clusters.control.graph) for target in neighbors
+            target: recompute_variance(self, other, c, clusters.clusters[target], clusters.control.G) for target in neighbors
         }
 
         for target, score in c.neighbors.items():
-            clusters[target].merge_neighbors(self.index, other.index, c.index, score)
+            clusters.clusters[target].merge_neighbors(self.index, other.index, c.index, score)
 
         return c
 
@@ -105,7 +105,7 @@ def find_merge(clusters):
     # We need to find 2 clusters with the least distance to merge
     # in the next step
     min_d, to_merge = None, None
-    for i, cluster in clusters.items():
+    for i, cluster in clusters.clusters.items():
         for j, dist in cluster.neighbors.items():
             if min_d is None or dist < min_d:
                 min_d = dist
