@@ -14,5 +14,6 @@ plt.show()
 
 cc = ClusterControl(G)
 clusters = ClusterArray(G, cc)
-i, j, _ = find_merge(clusters)
-clusters.merge(i, j)
+for k in range(15):
+    i, j, _ = find_merge(clusters)
+    clusters.merge(i, j)
