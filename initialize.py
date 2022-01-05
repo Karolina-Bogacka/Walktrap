@@ -1,5 +1,8 @@
+from collections import OrderedDict
+
 import networkx as nx
 import numpy as np
+from matplotlib import pyplot as plt
 
 
 def q_metric(G, clusters):
@@ -13,7 +16,7 @@ def q_metric(G, clusters):
                 if i in cluster.nodes and j in cluster.nodes:
                     ei += 1
                 ai += 1
-        q += (ei - (ai ** 2)/total_edges)/total_edges
+        q += (ei - (ai ** 2) / total_edges) / total_edges
     return q
 
 
@@ -26,8 +29,8 @@ def distance_squared(var_1, var_2, graph):
 
 
 def initial_variance(node, other, cluster_control):
-    return distance_squared(cluster_control.trans_matrix[node, ],
-                            cluster_control.trans_matrix[other, ],
+    return distance_squared(cluster_control.trans_matrix[node,],
+                            cluster_control.trans_matrix[other,],
                             cluster_control.G) / (2 * cluster_control.G.number_of_nodes())
 
 
@@ -35,7 +38,7 @@ def initialize_cluster(node, cluster_control):
     return Cluster(
         node,
         {node},
-        cluster_control.trans_matrix[node, ],
+        cluster_control.trans_matrix[node,],
         {other: initial_variance(node, other, cluster_control) for other in cluster_control.G.neighbors(node)}
     )
 
@@ -107,7 +110,8 @@ class Cluster:
         neighbors.remove(other.index)
 
         c.neighbors = {
-            target: recompute_variance(self, other, c, clusters.clusters[target], clusters.control.G) for target in neighbors
+            target: recompute_variance(self, other, c, clusters.clusters[target], clusters.control.G) for target in
+            neighbors
         }
 
         for target, score in c.neighbors.items():
@@ -129,6 +133,35 @@ def find_merge(clusters):
 
 
 class Partition:
-    def __init__(self, split, score):
+    def __init__(self, split):
         self.split = split
-        self.score = score
+
+
+def plot_colored(clusters, G, colors):
+    plt.figure(num=None, figsize=(30, 30), dpi=80)
+    plt.axis('off')
+    node_colors = [None] * G.number_of_nodes()
+    for i, (key, cluster) in enumerate(clusters.clusters.items()):
+        for n in cluster.nodes:
+            node_colors[n] = colors[i]
+    fig = plt.figure(1)
+    nx.draw(G, node_color=node_colors, with_labels=True, node_size=1000)
+    plt.title(f"Barbell Graph with {len(clusters.clusters)} clusters")
+    plt.show()
+
+
+def save_results(partition, G, PATH):
+    dic = OrderedDict.fromkeys(sorted([n + 1 for n in G.nodes]), 0)
+    for i, cluster in enumerate(partition.split):
+        for n in cluster:
+            dic[n + 1] = i + 1
+    with open(f'results/{PATH}', 'w') as csvfile:
+        for key in dic.keys():
+            csvfile.write("%s, %s\n" % (key, dic[key]))
+    return dic
+
+
+def open_data(PATH):
+    with open(f"datasets/{PATH}", newline='\n') as csvfile:
+        data = np.loadtxt(csvfile, delimiter=",")
+    return data
