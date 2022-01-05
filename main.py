@@ -9,7 +9,7 @@ def run_unset(PATH):
     data = open_data(PATH)
     start = time.time()
     G = nx.from_numpy_matrix(data)
-    cc = ClusterControl(G, t=500)
+    cc = ClusterControl(G, t=4)
     clusters = ClusterArray(G, cc)
     num = G.number_of_nodes()
     best_num = num
@@ -32,7 +32,7 @@ def run_set(PATH, k):
     data = open_data(PATH)
     start = time.time()
     G = nx.from_numpy_matrix(data)
-    cc = ClusterControl(G, t=500)
+    cc = ClusterControl(G, t=4)
     clusters = ClusterArray(G, cc)
     for n in range(G.number_of_nodes() - k):
         i, j, distance = find_merge(clusters)
